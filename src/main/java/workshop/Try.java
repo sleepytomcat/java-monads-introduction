@@ -1,5 +1,6 @@
 package workshop;
 
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 @FunctionalInterface
@@ -50,5 +51,14 @@ public class Try<T> {
 		} else {
 			return this;
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public <E extends Throwable> Try<T> onFailure(Class<E> ex, Consumer<E> onFailure) {
+		if (ex.isInstance(_exception)) {
+			onFailure.accept((E) _exception);
+		}
+
+		return this;
 	}
 }

@@ -35,7 +35,7 @@ class TestTry {
 	}
 
 	@Test
-	void recoverWithTryCatch() throws Throwable {
+	void recoverWithTryCatch() {
 		Library library = setupLibraryMock();
 
 		long bookId = -1; // wrong book id
@@ -51,8 +51,8 @@ class TestTry {
 			result = "NO AUTHOR";
 		} catch (Throwable ex) {
 			result = "UNEXPECTED FAILURE";
+			System.err.println(ex);
 		}
-
 		assertEquals("BOOK NOT FOUND", result);
 	}
 
@@ -62,14 +62,21 @@ class TestTry {
 
 		long bookId = -1; // wrong book id
 
+		// business logic
 		Try<String> tryString = new Try<>(bookId)
 				.map(library::getBook) // wrong book Id; will throw NotFoundException
 				.map(Book::getAuthor)
-				.map(Author::getName)
-				.recover(Library.NotFoundException.class, ex -> "BOOK NOT FOUND")
-				.recover(RuntimeException.class, ex -> "NO AUTHOR");
+				.map(Author::getName);
 
-		assertEquals("BOOK NOT FOUND", tryString.get());
+		// recovering and logging
+		String result = tryString
+				.recover(Library.NotFoundException.class, ex -> "BOOK NOT FOUND")
+				.recover(RuntimeException.class, ex -> "NO AUTHOR")
+				.onFailure(Throwable.class, ex -> System.err.println(ex))
+				.recover(Throwable.class, ex -> "UNEXPECTED FAILURE")
+				.get();
+
+		assertEquals("BOOK NOT FOUND", result);
 	}
 
 	Library setupLibraryMock() {
