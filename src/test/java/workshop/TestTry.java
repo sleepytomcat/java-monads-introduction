@@ -69,14 +69,14 @@ class TestTry {
 				.map(Author::getName);
 
 		// recovering and logging
-		String result = tryString
+		String response = tryString
 				.recover(Library.NotFoundException.class, ex -> "BOOK NOT FOUND")
 				.recover(RuntimeException.class, ex -> "NO AUTHOR")
 				.onFailure(Throwable.class, ex -> System.err.println(ex))
 				.recover(Throwable.class, ex -> "UNEXPECTED FAILURE")
 				.get();
 
-		assertEquals("BOOK NOT FOUND", result);
+		assertEquals("BOOK NOT FOUND", response);
 	}
 
 	Library setupLibraryMock() {
