@@ -40,3 +40,7 @@ test {
     // Use junit platform for unit tests
     useJUnitPlatform()
 }
+
+tasks.withType(JavaCompile).all {
+    options.compilerArgs.add("-Xlint:all")
+}
