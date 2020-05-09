@@ -31,7 +31,7 @@ public class Try<T> {
 	}
 
 	public <V> Try<V> map(FunctionUnchecked<T, V> transform) {
-		if (_value == null) {
+		if (_exception != null) {
 			return new Try<>(_exception);
 		}
 

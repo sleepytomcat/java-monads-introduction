@@ -62,14 +62,10 @@ class TestTry {
 
 		long bookId = -1; // wrong book id
 
-		// business logic
-		Try<String> tryString = new Try<>(bookId)
+		String response = new Try<>(bookId)
 				.map(library::getBook) // wrong book Id; will throw NotFoundException
 				.map(Book::getAuthor)
-				.map(Author::getName);
-
-		// recovering and logging
-		String response = tryString
+				.map(Author::getName)
 				.recover(Library.NotFoundException.class, ex -> "BOOK NOT FOUND")
 				.recover(RuntimeException.class, ex -> "NO AUTHOR")
 				.onFailure(Throwable.class, ex -> System.err.println(ex))
